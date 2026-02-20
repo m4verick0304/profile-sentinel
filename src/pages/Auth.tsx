@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { lovable } from '@/integrations/lovable/index';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import { MagnetLines } from '@/components/MagnetLines';
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
@@ -261,19 +262,32 @@ export default function Auth({ mode }: AuthPageProps) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-muted/30 px-4">
-      <div className="absolute right-4 top-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-muted/30 px-4 overflow-hidden">
+      {/* MagnetLines background */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-50 pointer-events-none">
+        <MagnetLines
+          rows={14}
+          columns={20}
+          containerSize="100%"
+          lineHeight="20px"
+          lineWidth="1.5px"
+          baseAngle={-8}
+          className="w-full h-full"
+          style={{ width: "100%", height: "100%" }}
+        />
+      </div>
+      <div className="absolute right-4 top-4 z-10">
         <ThemeToggle />
       </div>
 
-      <Link to="/" className="mb-8 flex items-center gap-2">
+      <Link to="/" className="mb-8 flex items-center gap-2 z-10">
         <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
           <Shield className="h-4 w-4 text-primary-foreground" />
         </div>
         <span className="text-lg font-bold">ProfileGuard</span>
       </Link>
 
-      <Card className="w-full max-w-sm">
+      <Card className="w-full max-w-sm z-10 backdrop-blur-sm bg-card/90">
         <CardHeader className="text-center">
           <CardTitle>{isLogin ? 'Welcome back' : 'Create your account'}</CardTitle>
           <CardDescription>

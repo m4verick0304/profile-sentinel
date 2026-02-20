@@ -5,6 +5,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Navbar } from '@/components/Navbar';
 import { Aurora } from '@/components/Aurora';
 import { Particles } from '@/components/Particles';
+import { TextPressure } from '@/components/TextPressure';
+import { MagnetLines } from '@/components/MagnetLines';
 
 const features = [
   {
@@ -67,11 +69,21 @@ export default function Index() {
           AI-Powered Detection — Now in Beta
         </div>
 
-        <h1 className="max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-          Detect Fake Profiles
-          <br />
-          <span className="text-primary">Before They Cause Harm</span>
-        </h1>
+        <div className="w-full max-w-3xl mb-2">
+          <TextPressure
+            text="Detect Fake Profiles"
+            weight
+            width
+            italic
+            textColor="currentColor"
+            className="h-16 sm:h-20 md:h-24"
+            minFontSize={28}
+          />
+        </div>
+
+        <h2 className="text-3xl font-bold text-primary tracking-tight sm:text-4xl">
+          Before They Cause Harm
+        </h2>
 
         <p className="mt-6 max-w-xl text-base text-muted-foreground md:text-lg">
           ProfileGuard uses machine learning to analyze social media accounts and surface fraud signals
@@ -136,8 +148,21 @@ export default function Index() {
       </section>
 
       {/* How it works */}
-      <section className="bg-muted/40 py-20">
-        <div className="container">
+      <section className="relative bg-muted/40 py-20 overflow-hidden">
+        {/* MagnetLines background */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-60">
+          <MagnetLines
+            rows={10}
+            columns={18}
+            containerSize="100%"
+            lineHeight="22px"
+            lineWidth="1.5px"
+            baseAngle={-5}
+            className="w-full h-full"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </div>
+        <div className="container relative z-10">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight">How it works</h2>
             <p className="mt-3 text-muted-foreground">Three steps from submission to clarity.</p>
