@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Navbar } from '@/components/Navbar';
 import { Particles } from '@/components/Particles';
+import { AnimatedList } from '@/components/AnimatedList';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -472,27 +473,33 @@ export default function Dashboard() {
                   Recent Scans
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 p-3 pt-0">
+              <CardContent className="p-3 pt-0">
                 {!recentScans || recentScans.length === 0 ? (
                   <p className="py-4 text-center text-xs text-muted-foreground">No scans yet</p>
                 ) : (
-                  recentScans.map((scan) => {
-                    const lcfg = labelConfig[scan.label as keyof typeof labelConfig];
-                    return (
-                      <div key={scan.id} className="flex items-center justify-between rounded-md border p-2.5">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <User className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
-                          <span className="truncate text-sm font-medium">{scan.username}</span>
+                  <AnimatedList
+                    items={recentScans}
+                    className="h-64"
+                    showGradients
+                    displayScrollbar={false}
+                    renderItem={(scan, _, isSelected) => {
+                      const lcfg = labelConfig[scan.label as keyof typeof labelConfig];
+                      return (
+                        <div className={`flex items-center justify-between rounded-md border p-2.5 my-1 transition-colors ${isSelected ? 'border-primary/40 bg-accent/50' : 'hover:bg-muted/40'}`}>
+                          <div className="flex items-center gap-2 min-w-0">
+                            <User className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
+                            <span className="truncate text-sm font-medium">{scan.username}</span>
+                          </div>
+                          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                            <span className="text-xs text-muted-foreground">{scan.risk_score}</span>
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${lcfg.color}`}>
+                              {lcfg.label}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                          <span className="text-xs text-muted-foreground">{scan.risk_score}</span>
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${lcfg.color}`}>
-                            {lcfg.label}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })
+                      );
+                    }}
+                  />
                 )}
               </CardContent>
             </Card>
