@@ -8,9 +8,7 @@ export default {
     container: {
       center: true,
       padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
+      screens: { "2xl": "1400px" },
     },
     extend: {
       colors: {
@@ -57,6 +55,24 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Risk semantic colors
+        risk: {
+          fake: {
+            DEFAULT: "hsl(var(--risk-fake))",
+            foreground: "hsl(var(--risk-fake-foreground))",
+            muted: "hsl(var(--risk-fake-muted))",
+          },
+          suspicious: {
+            DEFAULT: "hsl(var(--risk-suspicious))",
+            foreground: "hsl(var(--risk-suspicious-foreground))",
+            muted: "hsl(var(--risk-suspicious-muted))",
+          },
+          real: {
+            DEFAULT: "hsl(var(--risk-real))",
+            foreground: "hsl(var(--risk-real-foreground))",
+            muted: "hsl(var(--risk-real-muted))",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -65,20 +81,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
       },
       animation: {
