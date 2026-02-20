@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Shield, LogOut, LayoutDashboard, Settings, History } from 'lucide-react';
+import { Shield, LogOut, LayoutDashboard, Settings, History, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -52,6 +52,12 @@ export function Navbar() {
                 <Link to="/history">
                   <History className="mr-1.5 h-4 w-4" />
                   History
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/settings">
+                  <UserCog className="mr-1.5 h-4 w-4" />
+                  Settings
                 </Link>
               </Button>
               {userRole === 'admin' && (
