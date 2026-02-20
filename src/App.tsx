@@ -7,7 +7,6 @@ import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { SplashCursor } from "@/components/SplashCursor";
-import { PixelTrail } from "@/components/PixelTrail";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
@@ -23,7 +22,6 @@ const App = () => (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TooltipProvider>
         <SplashCursor SPLAT_RADIUS={0.15} DENSITY_DISSIPATION={4} VELOCITY_DISSIPATION={2.5} COLOR_UPDATE_SPEED={8} />
-        <PixelTrail gridSize={36} trailSize={0.22} maxAge={350} color="hsl(243 75% 65% / 0.7)" />
         <Toaster />
         <Sonner richColors />
         <BrowserRouter>
