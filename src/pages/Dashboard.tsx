@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Navbar } from '@/components/Navbar';
+import { Particles } from '@/components/Particles';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
@@ -220,7 +221,8 @@ export default function Dashboard() {
   const cfg = result ? labelConfig[result.label as keyof typeof labelConfig] : null;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col">
+      <Particles quantity={50} color="#6366f1" staticity={70} size={0.4} opacity={0.3} />
       <Navbar />
 
       <div className="container flex-1 py-8">
