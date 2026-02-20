@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Shield, LogOut, LayoutDashboard, Settings } from 'lucide-react';
+import { Shield, LogOut, LayoutDashboard, Settings, History } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -28,7 +28,7 @@ export function Navbar() {
           <span className="text-sm font-bold tracking-tight">ProfileGuard</span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           {isLanding && !user && (
             <>
               <Button variant="ghost" size="sm" asChild>
@@ -46,6 +46,12 @@ export function Navbar() {
                 <Link to="/dashboard">
                   <LayoutDashboard className="mr-1.5 h-4 w-4" />
                   Dashboard
+                </Link>
+              </Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/history">
+                  <History className="mr-1.5 h-4 w-4" />
+                  History
                 </Link>
               </Button>
               {userRole === 'admin' && (
