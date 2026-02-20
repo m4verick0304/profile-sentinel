@@ -3,6 +3,8 @@ import { Shield, Zap, BarChart3, Lock, ArrowRight, CheckCircle2, ChevronRight } 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Navbar } from '@/components/Navbar';
+import { Aurora } from '@/components/Aurora';
+import { Particles } from '@/components/Particles';
 
 const features = [
   {
@@ -47,8 +49,18 @@ export default function Index() {
 
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center overflow-hidden px-4 py-24 text-center md:py-36">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/40 via-background to-background" />
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,hsl(var(--primary)/0.08),transparent_60%)]" />
+        {/* Aurora background */}
+        <div className="absolute inset-0 -z-10">
+          <Aurora
+            colorStops={["#4f46e5", "#7c3aed", "#6366f1"]}
+            speed={0.4}
+            blend={0.6}
+            amplitude={1.2}
+            className="w-full h-full"
+          />
+        </div>
+        <div className="absolute inset-0 -z-10 bg-background/60" />
+        <Particles quantity={40} color="#6366f1" staticity={60} size={0.5} opacity={0.4} />
 
         <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium text-muted-foreground mb-6">
           <span className="h-1.5 w-1.5 rounded-full bg-risk-real animate-pulse-slow" />
