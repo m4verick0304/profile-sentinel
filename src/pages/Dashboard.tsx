@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
   Loader2, AlertTriangle, CheckCircle, XCircle,
-  RefreshCw, History, TrendingUp, User
+  RefreshCw, History, TrendingUp, User, Link2, Sparkles, Info
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import { Navbar } from '@/components/Navbar';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,6 +72,13 @@ export default function Dashboard() {
     random_characters: false,
     very_short: false,
   });
+
+  // URL scraping state
+  const [scrapeUrl, setScrapeUrl] = useState('');
+  const [isScraping, setIsScraping] = useState(false);
+  const [scrapeConfidence, setScrapeConfidence] = useState<'high' | 'medium' | 'low' | null>(null);
+  const [scrapePlatform, setScrapePlatform] = useState<string | null>(null);
+  const [scrapeNotes, setScrapeNotes] = useState<string | null>(null);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -146,10 +155,64 @@ export default function Dashboard() {
     }
   };
 
+  const handleScrape = async () => {
+    if (!scrapeUrl.trim()) return;
+    setIsScraping(true);
+    setScrapeConfidence(null);
+    setScrapePlatform(null);
+    setScrapeNotes(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/scrape-profile`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ url: scrapeUrl }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Scrape failed');
+
+      const p = data.profile;
+      // Auto-fill the form
+      reset({
+        username: p.username,
+        account_age: p.account_age,
+        posts_count: p.posts_count,
+        followers_count: p.followers_count,
+        following_count: p.following_count,
+        bio_length: p.bio_length,
+      });
+      setFlags(p.username_flags);
+      setScrapeConfidence(data.confidence);
+      setScrapePlatform(data.platform);
+      setScrapeNotes(data.notes);
+
+      toast.success(`Profile data scraped from ${data.platform}! Review & run analysis.`);
+    } catch (err) {
+      console.error(err);
+      toast.error(err instanceof Error ? err.message : 'Failed to scrape profile');
+    } finally {
+      setIsScraping(false);
+    }
+  };
+
   const handleReset = () => {
     setPhase('idle');
     setResult(null);
     setLoadingProgress(0);
+    setScrapeUrl('');
+    setScrapeConfidence(null);
+    setScrapePlatform(null);
+    setScrapeNotes(null);
     reset();
     setFlags({ numbers_heavy: false, no_profile_pic: false, random_characters: false, very_short: false });
   };
@@ -170,12 +233,72 @@ export default function Dashboard() {
           {/* Left: Form / Loading / Results */}
           <div className="lg:col-span-2 space-y-6">
 
+            {/* URL Scraper */}
+            {phase === 'idle' && (
+              <Card className="animate-fade-in border-primary/20 bg-primary/5">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                    Auto-fill from Social Media URL
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Paste a public profile URL — we'll scrape the data and fill the form automatically.
+                    Supports Instagram, Twitter/X, TikTok, Reddit, YouTube, LinkedIn and more.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <Link2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        placeholder="https://instagram.com/username"
+                        className="pl-9"
+                        value={scrapeUrl}
+                        onChange={(e) => setScrapeUrl(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleScrape()}
+                        disabled={isScraping}
+                      />
+                    </div>
+                    <Button onClick={handleScrape} disabled={isScraping || !scrapeUrl.trim()} size="sm">
+                      {isScraping ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Scrape'}
+                    </Button>
+                  </div>
+
+                  {scrapePlatform && scrapeConfidence && (
+                    <div className="flex flex-wrap items-center gap-2 rounded-md border bg-card p-2.5 text-xs">
+                      <Badge variant="outline" className="text-xs">{scrapePlatform}</Badge>
+                      <Badge
+                        variant="outline"
+                        className={`text-xs ${scrapeConfidence === 'high' ? 'border-risk-real text-risk-real' : scrapeConfidence === 'medium' ? 'border-risk-suspicious text-risk-suspicious' : 'border-risk-fake text-risk-fake'}`}
+                      >
+                        {scrapeConfidence} confidence
+                      </Badge>
+                      {scrapeNotes && (
+                        <span className="flex items-center gap-1 text-muted-foreground">
+                          <Info className="h-3 w-3" />
+                          {scrapeNotes}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <p className="text-xs text-muted-foreground">
+                    ⚠️ Only works on public profiles. Some platforms (Instagram, Twitter) may restrict scraping — review extracted data before running analysis.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+
+            <Separator className={phase === 'idle' ? 'opacity-50' : 'hidden'} />
+
             {/* IDLE — Form */}
             {phase === 'idle' && (
               <Card className="animate-fade-in">
                 <CardHeader>
                   <CardTitle className="text-base">Profile Data</CardTitle>
-                  <CardDescription>Enter the target account's metrics below.</CardDescription>
+                  <CardDescription>
+                    {scrapeConfidence ? 'Review the auto-filled data below and adjust if needed.' : "Enter the target account's metrics below."}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
